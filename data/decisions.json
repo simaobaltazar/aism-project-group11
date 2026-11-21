@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Mestrado",
+    "type": "pessoal",
+    "text": "Tenho 26 anos e sou programador júnior em Lisboa, a ganhar 1.600 EUR líquidos por mês. Estou a ponderar despedir-me para fazer um mestrado em Inteligência Artificial a tempo inteiro, com a duração de dois anos, pagando cerca de 3.500 EUR por ano de propinas com as minhas poupanças de 15.000 EUR."
+  },
+  {
+    "id": 2,
+    "title": "Microserviços",
+    "type": "técnica",
+    "text": "A nossa startup tem 8 programadores e uma aplicação web monolítica com cerca de 20.000 utilizadores diários. Estamos a ponderar migrar o monólito para uma arquitetura de microserviços nos próximos 6 meses."
+  },
+  {
+    "id": 3,
+    "title": "Comprar vs arrendar",
+    "type": "financeira",
+    "text": "Eu e o meu companheiro estamos a ponderar comprar um T2 perto de Lisboa por 280.000 EUR, com um crédito à habitação a 30 anos, em vez de continuarmos a arrendar um apartamento semelhante por 1.100 EUR por mês."
+  },
+  {
+    "id": 4,
+    "title": "Semana de 4 dias",
+    "type": "ambígua",
+    "text": "A pequena empresa que giro (25 funcionários, uma agência de marketing) está a ponderar passar para uma semana de trabalho de quatro dias, mantendo os mesmos salários."
+  }
+]

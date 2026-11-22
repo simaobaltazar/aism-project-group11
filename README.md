@@ -1,32 +1,38 @@
-# Engineered Disagreement: Proponent vs Opponent + Judge
+# Advogado do Diabo
 
-A multi-agent system where a user describes a decision they are considering. A **Proponent** agent argues for it, an **Opponent** agent argues against it (and is forbidden to concede) over three rounds, and a **Judge** agent reads the full transcript and reports the strongest points on each side, the claims that were never answered, and what information would settle the question. We then test whether the Judge is consistent when run several times.
+Projeto do grupo 11 para a unidade curricular de Agentes Inteligentes e Sistemas Multiagentes.
 
-## Installation
+O utilizador descreve uma decisão que está a ponderar e três agentes discutem-na. O Proponente argumenta a favor e o Oponente argumenta contra, durante três rondas. O Oponente não pode ceder. No fim, o Juiz lê o debate e diz que afirmações ficaram sem resposta, além de dar uma sentença.
 
-Requirements: Python 3.10 or newer and a free Google Gemini API key.
+Corremos o Juiz várias vezes sobre os mesmos casos para ver se chega sempre à mesma conclusão.
+
+## Instalação
+
+É preciso Python 3.10 ou mais recente e uma chave da API do Google Gemini (o plano gratuito chega).
 
 ```bash
-git clone <repository-url>
-cd aism-project-groupXX
+git clone https://github.com/simaobaltazar/aism-project-group11.git
+cd aism-project-group11
 pip install -r requirements.txt
 ```
 
-1. Create a free API key at https://aistudio.google.com
-2. Copy `.env.example` to `.env` and paste your key into `GEMINI_API_KEY`.
-3. In `.env`, set `GEMINI_MODEL` to a model ID listed in Google AI Studio (for example a Flash model).
+1. Criar uma chave em https://aistudio.google.com
+2. Copiar o ficheiro `.env.example` para `.env` e pôr a chave em `GEMINI_API_KEY`.
+3. Em `GEMINI_MODEL`, indicar o modelo a usar. Nas nossas experiências usámos `gemini-3.1-flash-lite`.
 
-The `.env` file is listed in `.gitignore` and is never uploaded.
+O `.env` está no `.gitignore`, por isso a chave não vai para o GitHub.
 
-## How to run
+No Windows, se `python` não funcionar, usar `py` (por exemplo, `py debate.py`).
 
-Run a single debate on any decision:
+## Como executar
+
+Um debate sobre uma decisão à escolha:
 
 ```bash
-python debate.py "Should I quit my job to start a master's degree?"
+python debate.py "Devo comprar um carro?"
 ```
 
-Run the experiments for one decision from `data/decisions.json` (one at a time, to stay within the free-tier daily limits):
+As experiências, uma decisão de cada vez por causa dos limites diários do plano gratuito:
 
 ```bash
 python experiments.py 1
@@ -35,34 +41,46 @@ python experiments.py 3
 python experiments.py 4
 ```
 
-Analyse all results:
+A análise dos resultados:
 
 ```bash
 python analyze.py
 ```
 
-## Expected output
+Um debate já guardado, mostrado no terminal:
 
-- `debate.py` prints the debate transcript and the Judge's judgement, and saves them to `results/single_run_<timestamp>.json`.
-- `experiments.py` saves `results/decision_<id>.json` with experiments A (one debate judged 5 times), B (full pipeline 3 times) and C (single-assistant baseline).
-- `analyze.py` prints a summary table and saves `results/summary.csv` and `results/agreement_chart.png`.
+```bash
+python show_debate.py 1
+```
 
-## Repository structure
+Os dois últimos comandos não fazem chamadas à API.
+
+## O que cada comando produz
+
+- `debate.py` mostra o debate e o julgamento e guarda-os em `results/single_run_<data_hora>.json`.
+- `experiments.py` cria `results/decision_<id>.json`. A experiência A julga o mesmo debate 5 vezes, a B repete o debate e o julgamento 3 vezes e a C pergunta a um único assistente, sem debate.
+- `analyze.py` mostra a tabela-resumo e cria `results/summary.csv` e `results/agreement_chart.png`.
+- `show_debate.py` mostra a decisão, as duas primeiras rondas e a sentença do Juiz.
+
+## Estrutura
 
 ```
-├── debate.py          # agents, debate loop and judge
-├── prompts.py         # system prompts of the three agents and the baseline
-├── experiments.py     # experiments A, B and C for one decision
-├── analyze.py         # verdict agreement, Jaccard similarity, chart
+├── debate.py          # agentes, debate e Juiz
+├── prompts.py         # instruções de cada agente e do baseline
+├── experiments.py     # experiências A, B e C
+├── analyze.py         # concordância, Jaccard e gráfico
+├── show_debate.py     # mostra um debate guardado
+├── list_models.py     # lista os modelos disponíveis para a chave
 ├── data/
-│   └── decisions.json # the decisions used as test cases
-├── results/           # generated transcripts, judgements, table and chart
+│   └── decisions.json # as 4 decisões de teste
+├── results/           # debates, julgamentos, tabela e gráfico
 ├── requirements.txt
-├── .env.example       # template for the API key
+├── .env.example       # exemplo do ficheiro com a chave
 └── README.md
 ```
 
-## Group members
+## Grupo
 
-- Name 1
-- Name 2
+- Miguel Duarte, n.º 240000645
+- Simão Baltazar, n.º 240001316
+- Tomás António, n.º 240001360

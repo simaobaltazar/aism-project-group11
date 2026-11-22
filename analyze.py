@@ -66,7 +66,7 @@ if not rows:
     print("No results found. Run experiments.py first.")
     raise SystemExit
 
-# Tabela: imprimir no ecrã e guardar em CSV
+# Tabela: guardar em CSV
 with open("results/summary.csv", "w", newline="", encoding="utf-8") as file:
     writer = csv.DictWriter(file, fieldnames=rows[0].keys())
     writer.writeheader()
@@ -75,7 +75,7 @@ with open("results/summary.csv", "w", newline="", encoding="utf-8") as file:
 for row in rows:
     print(row)
 
-# Gráfico: concordância A vs B para cada decisão
+# Gráfico: concordância A e B para cada decisão
 labels = [row["title"] for row in rows]
 positions = range(len(rows))
 width = 0.35

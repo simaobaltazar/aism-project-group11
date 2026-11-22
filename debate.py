@@ -21,20 +21,17 @@ from google.genai import types
 
 import prompts
 
-# --- Configuração -----------------------------------------------------------
-# A chave da API é lida do ficheiro .env (que NUNCA vai para o GitHub)
 load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 
 NUM_ROUNDS = 3        # número de rondas do debate
-PAUSE_SECONDS = 3     # pausa entre chamadas, para não passar os limites do plano gratuito
+PAUSE_SECONDS = 3     # pausa entre chamadas para não passar os limites do plano gratuito
 THINKING_LEVEL = "low"
 
 client = genai.Client(api_key=API_KEY)
 
 
-# --- Chamada ao modelo --------------------------------------------------------
 def call_llm(system_prompt, user_message, temperature=1.0):
     """Envia UMA mensagem ao modelo e devolve o texto da resposta.
     Cada chamada é independente: o modelo não guarda memória entre chamadas."""
@@ -53,10 +50,8 @@ def call_llm(system_prompt, user_message, temperature=1.0):
             time.sleep(PAUSE_SECONDS)
             return (response.text or "").strip()
         except Exception as error:
-            # Erro 404 = nome do modelo errado: não vale a pena tentar outra vez
             if "404" in str(error):
                 raise
-            # Normalmente é o erro 429 (limite atingido): esperamos e tentamos outra vez
             print(f"  [warning] {error}. Retrying in 30 seconds...")
             time.sleep(30)
     raise RuntimeError("The LLM call failed 5 times in a row.")
@@ -74,15 +69,12 @@ def build_message(decision, transcript, instruction):
         f"{instruction}"
     )
 
-
-# --- O debate -----------------------------------------------------------------
 def run_debate(decision, num_rounds=NUM_ROUNDS):
     """Corre o debate e devolve a transcrição (texto) e a lista de intervenções."""
     transcript = ""
     turns = []
 
     for round_number in range(1, num_rounds + 1):
-        # Em cada ronda fala primeiro o Proponente e depois o Oponente
         for role, system_prompt in [("PROPONENT", prompts.PROPONENT),
                                     ("OPPONENT", prompts.OPPONENT)]:
             print(f"  Round {round_number} - {role} is speaking...")
@@ -90,14 +82,12 @@ def run_debate(decision, num_rounds=NUM_ROUNDS):
                                     f"É a tua vez ({role}, ronda {round_number}).")
             argument = call_llm(system_prompt, message)
 
-            # Acrescentamos o argumento à transcrição partilhada
             transcript += f"\n=== {role} (round {round_number}) ===\n{argument}\n"
             turns.append({"round": round_number, "role": role, "text": argument})
 
     return transcript, turns
 
 
-# --- O juiz -------------------------------------------------------------------
 def judge(decision, transcript, temperature=1.0):
     """O Juiz lê a transcrição completa e devolve o julgamento."""
     print("  The JUDGE is deciding...")
@@ -114,8 +104,8 @@ def extract_verdict(judgement_text):
     """Procura a linha 'VERDICT: ...' no fim do julgamento."""
     matches = re.findall(r"VERDICT:\s*\**\s*(FOR|AGAINST|UNSETTLED)", judgement_text.upper())
     if matches:
-        return matches[-1]   # usamos a última ocorrência
-    return "PARSE_ERROR"     # o juiz não respeitou o formato
+        return matches[-1]   
+    return "PARSE_ERROR"     
 
 
 def extract_unanswered_ids(judgement_text):
@@ -126,8 +116,6 @@ def extract_unanswered_ids(judgement_text):
     ids = re.findall(r"\b[PO]\d+\b", match.group(1))
     return sorted(set(ids))
 
-
-# --- Guardar resultados -------------------------------------------------------
 def save_json(data, path):
     """Guarda um dicionário num ficheiro JSON."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -135,9 +123,7 @@ def save_json(data, path):
         json.dump(data, file, indent=2, ensure_ascii=False)
 
 
-# --- Execução direta: um único debate -----------------------------------------
 if __name__ == "__main__":
-    # A decisão vem da linha de comandos; se não vier, pedimos ao utilizador
     if len(sys.argv) > 1:
         decision = sys.argv[1]
     else:
